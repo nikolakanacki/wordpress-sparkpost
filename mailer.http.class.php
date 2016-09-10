@@ -10,6 +10,18 @@ class SparkPostHTTPMailer extends PHPMailer
 {
     protected $endpoint = 'https://api.sparkpost.com/api/v1/transmissions';
     private $options;
+    
+    /**
+     * Replacement send method to allow
+     * for custom filters to regulate which
+     * emails get sent and which are skipped.
+     */
+    function send()
+    {
+      $should = apply_filters('wpsp_should_email_be_sent',true,$this);
+      if ($should) return parent::send();
+      do_action('wpsp_email_skipped',$this);
+    }
 
     /**
      * Constructor.
